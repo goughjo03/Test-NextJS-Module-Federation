@@ -2,6 +2,23 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+const TestOne = dynamic(
+  // @ts-ignore
+  () => window.remote.get("./Button").then((factory) => factory()),
+  {
+    ssr: false,
+  }
+);
+
+// @ts-ignore
+const SampleComponent = dynamic(() => import("remote/Button"), {
+  // suspense: true,
+  ssr: false,
+});
+
 const Home: NextPage = () => {
   return (
     <div className={styles.container}>
@@ -13,6 +30,20 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Host</h1>
+        <div
+          style={{
+            display: "flex",
+            height: 200,
+            width: 200,
+            justifyContent: "center",
+            alignItems: "center",
+            border: "1px solid red",
+          }}
+        >
+          <Suspense fallback={<p>hello world</p>}>
+            <SampleComponent />
+          </Suspense>
+        </div>
       </main>
 
       <footer className={styles.footer}>
