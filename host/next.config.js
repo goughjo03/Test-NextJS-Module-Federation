@@ -1,7 +1,19 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
+const NextFederationPlugin = require("@module-federation/nextjs-mf/lib/NextFederationPlugin");
 
-module.exports = nextConfig
+module.exports = {
+  webpack(config, options) {
+    if (!options.isServer) {
+      config.plugins.push(
+        new NextFederationPlugin({
+          name: "host",
+          remotes: {
+            remote: `remote@http://localhost:3001/_next/static/chunks/remoteEntry.js`,
+          },
+        })
+      );
+    }
+
+    return config;
+  },
+};
